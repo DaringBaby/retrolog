@@ -1,0 +1,89 @@
+.container {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  font-family: system-ui, -apple-system, sans-serif;
+
+  header {
+    margin-bottom: 2rem;
+    h1 { margin-bottom: 0.2rem; }
+    p { color: #666; margin-top: 0; }
+  }
+}
+
+.status-msg {
+  font-size: 1.1rem;
+  color: #555;
+  &.error { color: #dc3545; }
+}
+
+.games-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.5rem;
+}
+
+.game-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+
+  .card-body {
+    padding: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+
+    h3 { margin: 0; font-size: 1.2rem; }
+    .badge {
+      background: #0f172a;
+      color: #fff;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+  }
+
+  .details {
+    color: #475569;
+    font-size: 0.9rem;
+    margin: 0.5rem 0 1.5rem 0;
+  }
+
+  .card-footer {
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .rating { font-weight: bold; color: #d97706; }
+
+    .btn-delete {
+      background: transparent;
+      border: 1px solid #ef4444;
+      color: #ef4444;
+      padding: 0.3rem 0.6rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      transition: all 0.2s;
+
+      &:hover {
+        background: #ef4444;
+        color: #fff;
+      }
+    }
+  }
+}

@@ -1,0 +1,42 @@
+<main class="container">
+  <header>
+    <h1> Retrolog </h1>
+    <p>Collezione personale</p>
+  </header>
+
+  @if (isLoading()) {
+  <p class="status-msg">Caricamento giochi in corso...</p>
+  }
+
+  @if (errorMessage()) {
+  <p class="status-msg error">{{ errorMessage() }}</p>
+  }
+
+  @if (!isLoading() && games().length === 0 && !errorMessage()) {
+    <p class="status-msg">Nessun gioco salvato. Aggiungine uno!</p>
+  }
+
+  <div class="games-grid">
+    @for (game of games(); track game.id) {
+    <div class="game-card">
+      <div class="card-body">
+        <div class="card-header">
+          <h3> {{ game.title }}</h3>
+          <span class="badge"> {{ game.platform }}</span>
+        </div>
+
+        <p class="details">
+          <b>Anno: </b> {{ game.year || 'N/D' }} |
+          <b>Stato: </b> {{ game.status }}
+        </p>
+
+        <div class="card-footer">
+          <span class="rating">⭐ {{ game.rating}}/10</span>
+          <button class="btn-delete" (click)="deleteGame(game.id)">Elimina</button>
+        </div>
+
+      </div>
+    </div>
+    }
+  </div>
+</main>
