@@ -3,7 +3,37 @@
     <h1> Retrolog </h1>
     <p>Collezione personale</p>
   </header>
+<!-- Ricerca Dawg -->
+<section class="search-section">
+  <div class="search-box">
+    <input
+      type="text"
+      placeholder="Cerca un gioco da aggiungere..."
+      [ngModel]="searchQuery()"
+      (ngModelChange)="onSearch($event)"
+    >
+    @if (isSearching()) {
+    <span class="search-spinner">Attendere...</span>
+    }
+  </div>
 
+  @if (searchResults().length > 0) {
+  <div class="search-dropdown">
+    @for (result of searchResults(); track result.title) {
+    <div class="dropdown-item" (click)="openSaveModal(result)">
+      @if (result.coverUrl) {
+        <img [src]="result.coverUrl" alt="Cover" class="thumb">
+      }
+        <div class="info">
+          <b>{{ result.title }}</b>
+          <small>{{ result.platform }} ({{ result.year || 'N/D' }})</small>
+        </div>
+        <button class="btn-add">+</button>
+    </div>
+    }
+  </div>
+  }
+</section>
   @if (isLoading()) {
   <p class="status-msg">Caricamento giochi in corso...</p>
   }
@@ -16,8 +46,17 @@
     <p class="status-msg">Nessun gioco salvato. Aggiungine uno!</p>
   }
 
+  <!-- Barra Filtri -->
+  <div class="filter-bar">
+    <button [class.active]="activeFilter() === 'All'" (click)="setFilter('All')">All</button>
+    <button [class.active]="activeFilter() === 'Playing'" (click)="setFilter('Playing')">Playing</button>
+    <button [class.active]="activeFilter() === 'Completed'" (click)="setFilter('Completed')">Completed</button>
+    <button [class.active]="activeFilter() === 'Backlog'" (click)="setFilter('Backlog')">Backlog</button>
+  </div>
+
+
   <div class="games-grid">
-    @for (game of games(); track game.id) {
+    @for (game of filteredGames(); track game.id) {
     <div class="game-card">
       <div class="card-body">
         <div class="card-header">
@@ -39,4 +78,39 @@
     </div>
     }
   </div>
+  <!-- Modal di personalizzazione -->
+  @if (selectedGameToSave(); as game) {
+  <div class="modal-backdrop">
+    <div class="modal-content">
+      <h3>Aggiungi {{ game.title }}</h3>
+      <p><small>{{ game.platform }} ({{ game.year || 'N/D' }})</small></p>
+
+      <label>
+        Stato:
+        <select [ngModel]="selectedStatus()" (ngModelChange)="selectedStatus.set($event)">
+          <option value="Backlog">Backlog</option>
+          <option value="Playing">Playing</option>
+          <option value="Completed">Completed</option>
+          <option value="Dropped">Dropped</option>
+        </select>
+      </label>
+
+      <label>
+        Voto: {{ selectedRating() }}/10
+        <input
+          type="range"
+          min="1"
+          max="10"
+          [ngModel]="selectedRating()"
+          (ngModelChange)="selectedRating.set(+$event)">
+      </label>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-cancel" (click)="cancelSave()">Annulla</button>
+        <button type="button" class="btn-confirm" (click)="confirmSave()">Salva</button>
+      </div>
+    </div>
+  </div>
+  }
+
 </main>

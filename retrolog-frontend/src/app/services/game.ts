@@ -21,4 +21,8 @@ export class GameService {
   deleteGame(id: number): Observable<void> {                    // cancella un record usando un template literal per url dinamico con richiesta http delete
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
+
+  searchGames(query: string): Observable<Game[]> {
+    return this.http.get<Game[]>(`${this.apiUrl}/search?query=${encodeURIComponent(query)}`);
+  }
 }
