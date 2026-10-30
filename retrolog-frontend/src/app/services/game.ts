@@ -22,6 +22,10 @@ export class GameService {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
+  updateGame(id: number, game: Partial<Game>): Observable<Game> {
+    return this.http.put<Game>(`${this.apiUrl}/${id}`, game);
+  }
+
   searchGames(query: string): Observable<Game[]> {
     return this.http.get<Game[]>(`${this.apiUrl}/search?query=${encodeURIComponent(query)}`);
   }

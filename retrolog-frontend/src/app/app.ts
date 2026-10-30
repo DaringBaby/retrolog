@@ -134,6 +134,37 @@ export class App implements OnInit, OnDestroy {
     });
   }
 
+  updateGameStatus(game: Game, newStatus: string): void {
+    if (!game.id) return;
+
+    const updatedData = { ...game, status: newStatus };
+
+    this.gameService.updateGame(game.id, updatedData).subscribe({
+      next: (saved) => {
+        // aggiorna stato del gioco nella lista
+        this.games.update((list) =>
+          list.map((g) => (g.id === saved.id ? saved : g))
+        );
+      },
+      error: (err) => console.error('Errore di aggiornamento stato:', err)
+    });
+  }
+
+  updateGameRating(game: Game, newRating: number): void {
+    if (!game.id) return;
+
+    const updatedData: Game = { ...game, rating: newRating };     //crea copia aggiornando solo campo rating
+    // invia richiesta
+    this.gameService.updateGame(game.id, updatedData).subscribe({
+      next: (saved) => {
+        this.games.update((list) =>
+          list.map((g) => (g.id === saved.id ? saved : g))
+        );
+      },
+      error: (err) => console.error('Errore aggiornamento voto:', err)
+    });
+  }
+
   deleteGame(id?: number): void {
     if (!id) return;
     this.gameService.deleteGame(id).subscribe({
@@ -147,4 +178,20 @@ export class App implements OnInit, OnDestroy {
   setFilter(status: string): void {
     this.activeFilter.set(status);
   }
+
+  // widget statistiche
+  totalGames = computed(() => this.games().length);
+  completedGames = computed(() =>
+    this.games().filter((g) => g.status?.toLowerCase() === 'completed').length);
+
+  // media voto
+  averageRating = computed(() => {
+    const list = this.games();
+    if (list.length === 0) return 0;
+
+    const totalScore = list.reduce((acc, curr) => acc + (curr.rating || 0), 0);
+    const avg = totalScore / list.length;
+
+    return Math.round(avg * 10) / 10;
+  })
 }

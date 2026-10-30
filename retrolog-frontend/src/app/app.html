@@ -46,6 +46,22 @@
     <p class="status-msg">Nessun gioco salvato. Aggiungine uno!</p>
   }
 
+  <!-- Pannello statistiche -->
+  <section class="stats-panel">
+    <div class="stat-card">
+      <span class="stat-value">{{ totalGames() }}</span>
+      <span class="stat-label">Giochi totali</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-value"> {{ completedGames() }}</span>
+      <span class="stat-label">Giochi completati</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-value">⭐ {{ averageRating() }}</span>
+      <span class="stat-label">Voto Medio</span>
+    </div>
+  </section>
+
   <!-- Barra Filtri -->
   <div class="filter-bar">
     <button [class.active]="activeFilter() === 'All'" (click)="setFilter('All')">All</button>
@@ -59,6 +75,23 @@
     @for (game of filteredGames(); track game.id) {
     <div class="game-card">
       <div class="card-body">
+        <div class="card-cover">
+          @if (game.coverUrl) {
+          <img
+            [src]="game.coverUrl"
+            [alt]="game.title"
+            loading="lazy"
+            (error)="$any($event.target).style.display = 'none'; fallbackBox.style.display = 'flex'">
+          }
+
+            <div
+              #fallbackBox
+              class="cover-placeholder"
+              [style.display]="game.coverUrl ? 'none' : 'flex'">
+                <span class="placeholder-icon">🎮</span>
+                <span class="placeholder-text"> {{ game.platform || 'Retro' }}</span>
+              </div>
+        </div>
         <div class="card-header">
           <h3> {{ game.title }}</h3>
           <span class="badge"> {{ game.platform }}</span>
@@ -66,11 +99,30 @@
 
         <p class="details">
           <b>Anno: </b> {{ game.year || 'N/D' }} |
-          <b>Stato: </b> {{ game.status }}
+          <b>Stato: </b> <select
+            [ngModel]="game.status"
+            (ngModelChange)="updateGameStatus(game, $event)"
+            class="status-select">
+              <option value="Backlog">Backlog</option>
+              <option value="Playing">Playing</option>
+              <option value="Completed">Completed</option>
+              <option value="Dropped">Dropped</option>
+            </select>
         </p>
 
         <div class="card-footer">
-          <span class="rating">⭐ {{ game.rating}}/10</span>
+          <!-- Selettore voto -->
+          <label class="rating-label">⭐
+            <select
+              [ngModel]="game.rating"
+              (ngModelChange)="updateGameRating(game, +$event)"
+              class="rating-select"
+            >
+              @for (score of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]; track score) {
+              <option [value]="score">{{ score }}/10</option>
+              }
+            </select>
+          </label>
           <button class="btn-delete" (click)="deleteGame(game.id)">Elimina</button>
         </div>
 

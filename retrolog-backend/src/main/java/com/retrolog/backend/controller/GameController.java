@@ -17,7 +17,6 @@ public class GameController {
     private final GameRepository gameRepository;
     private final RawgService rawgService;
 
-    // Entrambe le dipendenze iniettate in modo pulito dal costruttore
     public GameController(GameRepository gameRepository, RawgService rawgService) {
         this.gameRepository = gameRepository;
         this.rawgService = rawgService;
@@ -45,5 +44,18 @@ public class GameController {
     @GetMapping("/search")
     public List<RawgGameDto> searchRawg(@RequestParam String query) {
         return rawgService.searchGames(query);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Game> updateGame(@PathVariable Long id, @RequestBody Game updatedGame) {
+        return gameRepository.findById(id)
+        .map(game -> {
+            game.setStatus(updatedGame.getStatus());
+            game.setRating(updatedGame.getRating());
+            if (updatedGame.getTitle() != null) game.setTitle(updatedGame.getTitle());
+            if (updatedGame.getPlatform() != null) game.setPlatform(updatedGame.getPlatform());
+            return ResponseEntity.ok(gameRepository.save(game));
+        })
+        .orElseGet(() -> ResponseEntity.notFound().build());
     }
 }
